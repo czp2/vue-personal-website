@@ -14,11 +14,11 @@ module.exports = {
   // add your custom rules here
   //it is base on https://github.com/vuejs/eslint-config-vue
   rules: {
-    "vue/max-attributes-per-line": [2, {
+    "vue/max-attributes-per-line": [1, {
       "singleline": 10,
       "multiline": {
         "max": 1,
-        "allowFirstLine": false
+        "allowFirstLine": true
       }
     }],
     "vue/html-self-closing": ["error", {
