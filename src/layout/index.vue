@@ -1,9 +1,19 @@
 <template>
-  <div :class="classObj" class="app-wrapper">
-    <div v-if="device === 'mobile' && sidebar.opened" class="drawer-bg" @click="handleClickOutside"></div>
+  <div
+    :class="classObj"
+    class="app-wrapper"
+  >
+    <div
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
+    ></div>
 
     <!--当 menuInLeft===true，左菜单栏显示,顶部隐藏-->
-    <sidebar v-if="menuInLeft" class="sidebar-container" />
+    <sidebar
+      v-if="menuInLeft"
+      class="sidebar-container"
+    />
 
     <!--当左菜单栏显示时，需配置main-container 样式，改样式位置在src/styles/sidebar.scss文件中-->
     <div :class="{ hasTagsView: needTagsView, 'main-container': menuInLeft }">
@@ -14,7 +24,9 @@
         <!-- <headbar v-if="!menuInLeft" /> -->
       </div>
 
-      <app-main />
+      <div class="wrapper">
+        <app-main />
+      </div>
     </div>
   </div>
 </template>
@@ -60,3 +72,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.wrapper {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+}
+</style>

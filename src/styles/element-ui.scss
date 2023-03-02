@@ -1,5 +1,76 @@
 // cover some element-ui styles
 
+.box-card {
+  backdrop-filter: blur(10px);
+  background: hsla(0, 0%, 100%, 0.5);
+}
+
+//统一边框圆角
+.el-input__inner,
+.el-button,
+.el-radio,
+.el-tag,
+.el-checkbox,
+.el-checkbox__inner,
+.el-card {
+  border-radius: 0px !important;
+}
+
+//输入框
+.el-input {
+  .el-input__icon {
+    line-height: unset;
+    color: #5473E8 !important;
+    font-weight: 900;
+  }
+}
+
+.el-textarea__inner {
+  font-family: unset !important;
+}
+
+.el-radio {
+  margin-left: 0 !important;
+}
+
+.el-checkbox {
+  .el-checkbox__inner {
+    border-color: #DCDFE6 !important;
+  }
+
+  .el-checkbox__input.is-checked .el-checkbox__inner,
+  .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+    border-color: #409EFF !important;
+  }
+}
+
+//折叠列表
+.el-collapse {
+  .el-collapse-item {
+
+    .el-collapse-item__header,
+    .el-collapse-item__wrap {
+      background-color: transparent;
+    }
+  }
+}
+
+//分页
+.el-pagination {
+  text-align: right;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+//日历
+.el-calendar {
+  width: 600px;
+}
+
+.el-calendar-table .el-calendar-day {
+  height: 70px;
+}
+
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
   font-weight: 400 !important;

@@ -52,22 +52,33 @@ export const constantRoutes = [
       name: 'Index',
       component: () => import('@/views/dashboard/index'),
       meta: { title: 'Index', icon: 'dashboard' }
-    },
-    {
-      path: 'record',
-      component: () => import('@/views/record'),
-      name: 'Record',
-      meta: { title: 'Record', noCache: true }
-    },
-    {
-      path: 'task',
-      component: () => import('@/views/task'),
-      name: 'Task',
-      meta: { title: 'Task', noCache: true }
     }
     ]
   },
-
+  {
+    path: '/record',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/record'),
+        name: 'Record',
+        meta: { title: 'Record', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/task',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/task'),
+        name: 'Task',
+        meta: { title: 'Task', noCache: true }
+      }
+    ]
+  },
   // {
   //   path: '/example',
   //   component: Layout,
