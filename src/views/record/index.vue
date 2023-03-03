@@ -1,18 +1,19 @@
 <template>
   <div class="theme-container">
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline" @submit.native.prevent>
+    <el-form ref="searchForm" :inline="true" :model="searchForm" class="demo-form-inline" @submit.native.prevent>
       <el-form-item prop="type">
         <el-select v-model="searchForm.type" size="small" placeholder="请选择记录的类型" clearable>
-          <el-option v-for="(val, key) in typeEnum" :key="key" :label="val" :value="key" />
+          <el-option v-for="item in typeEnum" :key="item[0]" :label="item[1]" :value="item[0]" />
         </el-select>
       </el-form-item>
-      <el-form-item prop="keyword">
-        <el-input v-model="searchForm.keyword" size="small" placeholder="请输入关键字" clearable @keyup.enter.native="handleSearch()" />
+      <el-form-item prop="title">
+        <el-input v-model="searchForm.title" size="small" placeholder="请输入关键字" clearable @keyup.enter.native="handleSearch()" />
       </el-form-item>
       <el-form-item label="" prop="startTime">
         <el-date-picker
           v-model="searchForm.startTime"
           size="small"
+          format="yyyy-MM-dd HH:mm:ss"
           value-format="yyyy-MM-dd HH:mm:ss"
           type="datetime"
           placeholder="请选择开始时间"
@@ -24,6 +25,7 @@
         <el-date-picker
           v-model="searchForm.endTime"
           size="small"
+          format="yyyy-MM-dd HH:mm:ss"
           value-format="yyyy-MM-dd HH:mm:ss"
           type="datetime"
           placeholder="请选择结束时间"
@@ -37,7 +39,7 @@
                    type="primary"
                    icon="el-icon-search"
                    :loading="loading"
-                   @click="handleSearch"
+                   @click="handleSearch()"
         >搜索
         </el-button>
         <el-button size="small" @click="handleSearch(true)">重置</el-button>
@@ -70,9 +72,9 @@
       </div>
       <el-pagination
         background
-        :current-page="searchForm.pageNo"
-        :page-sizes="[10, 15, 30, 50]"
-        :page-size="searchForm.pageSize"
+        :current-page="searchForm.page"
+        :page-sizes="[5, 10, 20, 30]"
+        :page-size="searchForm.limit"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         @size-change="handleSizeChange"
@@ -85,20 +87,28 @@
     <br />
     <div class="content">
       <el-timeline>
-        <el-checkbox-group v-model="checkedData" @change="handleCheckedDataChange">
-          <el-timeline-item v-for="item in dataArr" :key="item.id" :timestamp="item.timestamp" placement="top">
-            <el-card style="position: relative">
-              <el-checkbox style="position: absolute; top: 0; left: 0; font-size: 0" :label="item.id">{{}}</el-checkbox>
+        <el-checkbox-group v-model="multipleSelection">
+          <el-timeline-item v-for="item in dataArr" :key="item.id" :timestamp="item.createtime.split(' ')[0]" placement="top">
+            <el-card class="box-card" shadow="hover" style="position: relative">
+              <el-checkbox style="position: absolute; top: 2px; left: 2px; font-size: 0" :label="item.id">{{ '' }}</el-checkbox>
               <div class="flex-between mb-20">
                 <el-tag>
                   类型：
-                  {{ typeEnum[item.type] }}
+                  {{ typeEnum.get(item.type) }}
                 </el-tag>
-                <el-popconfirm title="确定删除吗？" @confirm="handleDelete(item.id)">
+                <el-popconfirm title="确定删除吗？" @onConfirm="handleDelete(item.id)">
                   <el-button slot="reference" type="danger" size="small" icon="el-icon-delete" plain />
                 </el-popconfirm>
               </div>
               <h4>{{ item.title }}</h4>
+              <mavon-editor
+                v-model="item.content"
+                style="min-height: 50px"
+                :subfield="false"
+                default-open="preview"
+                :toolbars-flag="false"
+                :editable="false"
+              />
               <p style="text-align: right">{{ item.createtime }}</p>
             </el-card>
           </el-timeline-item>
@@ -107,13 +117,13 @@
     </div>
 
     <el-dialog title="提交选项" width="600px" :visible.sync="dialogVisible">
-      <el-form :model="submitForm" :rules="submitFormRules" label-width="80px" label-position="left">
+      <el-form ref="submitForm" :model="submitForm" :rules="submitFormRules" label-width="80px" label-position="left">
         <el-form-item label="标题" prop="title">
           <el-input v-model="submitForm.title" size="small" autocomplete="off" />
         </el-form-item>
         <el-form-item label="类型" prop="type">
           <el-radio-group v-model="submitForm.type" size="small">
-            <el-radio v-for="(val, key) in typeEnum" :key="key" class="mb-20" :label="key" border>{{ val }}</el-radio>
+            <el-radio v-for="item in typeEnum" :key="item[0]" class="mb-20" :label="item[0]" border>{{ item[1] }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -126,21 +136,25 @@
 </template>
 
 <script>
+import page from '@/mixins/page'
+import { getList, createRecord, deleteRecord } from '@/api/record'
 export default {
   name: '',
+  mixins: [page],
   data() {
     return {
       isEditorShow: false,
       dialogVisible: false,
       searchForm: {
         type: undefined,
-        pageNo: 1,
-        pageSize: 10,
+        title: undefined,
+        page: 1,
+        limit: 5,
         startTime: undefined,
         endTime: undefined
       },
       submitForm: {
-        type: '1',
+        type: 1,
         title: '无题',
         value: undefined
       },
@@ -148,17 +162,16 @@ export default {
         title: { required: true, message: '请输入标题', trigger: 'blur' },
         type: { required: true, message: '请选择类型', trigger: 'blur' }
       },
-      typeEnum: {
-        // 0: '全部类型',
-        1: '吐槽一下',
-        2: '生活记录',
-        3: '创作灵感',
-        4: '人生感悟'
-      },
+      typeEnum: new Map([
+        [1, '吐槽一下'],
+        [2, '生活记录'],
+        [3, '创作灵感'],
+        [4, '人生感悟']
+      ]),
       loading: false,
       dataArr: [],
       total: 0,
-      checkedData: [],
+      multipleSelection: [],
       checkAll: false,
       isIndeterminate: false,
       pickerOptions: {
@@ -191,7 +204,7 @@ export default {
   },
   computed: {
     deleteAvailable() {
-      return !(this.checkedData.length >= 1)
+      return !(this.multipleSelection.length >= 1)
     },
     submitAvailable() {
       return !this.submitForm.value
@@ -200,27 +213,26 @@ export default {
       return this.dataArr.map((item) => item.id)
     }
   },
-  created() {
+  watch: {
+    multipleSelection(newVal) {
+      const checkedCount = newVal.length
+      this.checkAll = checkedCount === this.dataArrIds.length
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.dataArrIds.length
+    }
+  },
+  mounted() {
     this.getDataArr()
   },
   methods: {
     getDataArr() {
-      this.dataArr = [
-        {
-          id: 1,
-          type: '1',
-          timestamp: '2018/4/12',
-          title: '更新 Github 模板',
-          createtime: '2018/4/12 20:46'
-        },
-        {
-          id: 2,
-          type: '1',
-          timestamp: '2018/4/12',
-          title: '更新 Github 模板',
-          createtime: '2018/4/12 20:46'
+      this.loading = true
+      getList(this.searchForm).then((res) => {
+        this.loading = false
+        if (res.code === 20000) {
+          this.dataArr = res.data.items
+          this.total = res.data.total
         }
-      ]
+      })
     },
     handleCollapse() {
       if (this.submitForm.value) {
@@ -239,11 +251,40 @@ export default {
       }
     },
     handleSubmit() {
-      console.log(this.submitForm)
-      this.handleDialogClose()
+      this.$refs['submitForm'].validate((valid) => {
+        if (valid) {
+          this.$confirm('请确认是否提交！', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            createRecord(this.submitForm).then((res) => {
+              this.$message({
+                type: 'success',
+                message: res.message
+              })
+              if (res.code === 20000) {
+                this.handleDialogClose()
+                this.getDataArr()
+              }
+            })
+          })
+        } else {
+          return false
+        }
+      })
     },
     handleDelete(id) {
-      console.log(id)
+      deleteRecord([id]).then((res) => {
+        this.$message({
+          type: 'success',
+          message: res.message
+        })
+        if (res.code === 20000) {
+          this.countPage()
+          this.getDataArr()
+        }
+      })
     },
     handleMutipleDelete() {
       this.$confirm('确定全部删除吗?', '提示', {
@@ -253,33 +294,38 @@ export default {
         center: true
       })
         .then(() => {
-          console.log(this.checkedData)
+          deleteRecord(this.multipleSelection).then((res) => {
+            this.$message({
+              type: 'success',
+              message: res.message
+            })
+            if (res.code === 20000) {
+              this.countMutiplePage()
+              this.getDataArr()
+              this.multipleSelection = []
+            }
+          })
         })
         .catch(() => {})
     },
     handleSearch(reset = false) {
       if (reset) {
         this.$refs['searchForm'].resetFields()
-        this.pageSize = 10
+        this.limit = 5
       }
-      this.searchForm.pageNo = 1
+      this.searchForm.page = 1
       this.getDataArr()
     },
     handleCheckAllChange(val) {
-      this.checkedData = val ? this.dataArrIds : []
+      this.multipleSelection = val ? [...this.dataArrIds] : []
       this.isIndeterminate = false
     },
-    handleCheckedDataChange(value) {
-      const checkedCount = value.length
-      this.checkAll = checkedCount === this.dataArrIds.length
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.dataArrIds.length
-    },
     handleSizeChange(val) {
-      this.searchForm.pageSize = val
+      this.searchForm.limit = val
       this.getDataArr()
     },
     handleCurrentChange(val) {
-      this.searchForm.pageNo = val
+      this.searchForm.page = val
       this.getDataArr()
     },
     handleDialogOpen() {
@@ -292,5 +338,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

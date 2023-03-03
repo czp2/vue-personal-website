@@ -21,6 +21,10 @@ module.exports = {
         "allowFirstLine": true
       }
     }],
+    "vue/html-closing-bracket-newline": ["error", {
+      "singleline": "never",
+      "multiline": "always"
+    }],
     "vue/html-self-closing": ["error", {
       "html": {
         "void": "always",
@@ -56,7 +60,7 @@ module.exports = {
     'curly': [2, 'multi-line'],
     'dot-location': [2, 'property'],
     'eol-last': 0,
-    'eqeqeq': ["error", "always", { "null": "ignore" }],
+    'eqeqeq': [1, "always", { "null": "ignore" }],
     'generator-star-spacing': [2, {
       'before': true,
       'after': true
@@ -70,7 +74,7 @@ module.exports = {
       'beforeColon': false,
       'afterColon': true
     }],
-    'keyword-spacing': [2, {
+    'keyword-spacing': [1, {
       'before': true,
       'after': true
     }],
@@ -180,10 +184,10 @@ module.exports = {
       'before': false,
       'after': true
     }],
-    'space-before-blocks': [2, 'always'],
-    'space-before-function-paren': [2, 'never'],
+    'space-before-blocks': [1, 'always'],
+    'space-before-function-paren': [0, 'never'],
     'space-in-parens': [2, 'never'],
-    'space-infix-ops': 2,
+    'space-infix-ops': 1,
     'space-unary-ops': [2, {
       'words': true,
       'nonwords': false

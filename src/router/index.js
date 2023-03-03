@@ -44,6 +44,18 @@ export const constantRoutes = [
   },
 
   {
+    path: '/task',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/task'),
+        name: 'Task',
+        meta: { title: '任务日程', noCache: true }
+      }
+    ]
+  },
+  {
     path: '/',
     component: Layout,
     redirect: '/index',
@@ -51,7 +63,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'Index',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Index', icon: 'dashboard' }
+      meta: { title: '站点导航', icon: 'dashboard' }
     }
     ]
   },
@@ -63,22 +75,11 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/record'),
         name: 'Record',
-        meta: { title: 'Record', noCache: true }
+        meta: { title: '记录一下', noCache: true }
       }
     ]
   },
-  {
-    path: '/task',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/task'),
-        name: 'Task',
-        meta: { title: 'Task', noCache: true }
-      }
-    ]
-  },
+
   // {
   //   path: '/example',
   //   component: Layout,

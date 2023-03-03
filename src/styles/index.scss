@@ -24,7 +24,10 @@ html {
 
 #app {
   height: 100%;
-  background-color: #e9eef3;
+
+  .app-wrapper {
+    background-color: #e9eef3;
+  }
 }
 
 *,

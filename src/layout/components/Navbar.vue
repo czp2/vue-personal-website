@@ -8,10 +8,10 @@
       @toggleClick="toggleSideBar"
     /> -->
     <div class="nav-left">
-      <breadcrumb class="breadcrumb-container" />
-      <!-- <div class="weather">
+      <!-- <breadcrumb class="breadcrumb-container" /> -->
+      <div class="weather">
         <div id="he-plugin-simple"></div>
-      </div> -->
+      </div>
     </div>
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
@@ -45,13 +45,13 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import Headbar from '@/layout/components/Headbar'
-import Breadcrumb from '@/components/Breadcrumb'
+// import Breadcrumb from '@/components/Breadcrumb'
 // import Hamburger from '@/components/Hamburger'
 
 export default {
   components: {
-    Headbar,
-    Breadcrumb
+    Headbar
+    // Breadcrumb,
     // Hamburger
   },
   computed: {
@@ -114,6 +114,7 @@ export default {
     width: 270px;
     top: 6px;
     left: 10px;
+    z-index: 99;
     .weather {
       z-index: 99;
     }
