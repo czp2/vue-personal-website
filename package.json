@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "axios": "0.18.1",
+    "bookmark-file-parser": "^1.0.6",
     "core-js": "^3.29.0",
     "element-ui": "2.13.2",
     "js-cookie": "2.2.0",

@@ -14,6 +14,7 @@
 //}
 $lens: 5, 10, 20, 40;
 $directions: "", "-bottom", "-top", "-left", "-right";
+
 .theme-container {
   width: 100%;
   height: 100%;
@@ -28,10 +29,11 @@ $directions: "", "-bottom", "-top", "-left", "-right";
     margin-bottom: 10px
   }
 
-  .flex{
+  .flex {
     display: flex;
     align-items: center;
   }
+
   .flex-between {
     display: flex;
     justify-content: space-between;
@@ -41,9 +43,11 @@ $directions: "", "-bottom", "-top", "-left", "-right";
   @each $len in $lens {
     @each $dir in $directions {
       $dir-alias: str-slice($dir, 2, 2);
+
       .m#{$dir-alias}-#{$len} {
         margin#{$dir}: $len + px;
       }
+
       .p#{$dir-alias}-#{$len} {
         padding#{$dir}: $len + px;
       }

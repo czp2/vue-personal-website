@@ -114,9 +114,9 @@ export default {
     width: 270px;
     top: 6px;
     left: 10px;
-    z-index: 99;
+    z-index: 99999;
     .weather {
-      z-index: 99;
+      z-index: 99999;
     }
   }
   .menu-box {
